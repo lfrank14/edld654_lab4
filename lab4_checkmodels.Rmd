@@ -1,0 +1,67 @@
+---
+title: "lab4_checkmodels"
+author: "Lea Frank"
+date: "11/9/2020"
+output:
+  html_document: 
+    toc: true
+    toc_float: true
+    code_folding: hide
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(tidymodels)
+```
+
+## Check results of the simple KNN model
+
+```{r}
+knn_fit_simple <- readRDS("models/knn_fit_simple.Rds")
+
+knn_fit_simple %>%
+  collect_predictions()
+
+knn_fit_simple %>%
+  collect_metrics(summarize = FALSE)
+
+knn_fit_simple %>% 
+  collect_metrics(summarize = TRUE)
+```
+
+## Check results of the tuned KNN model
+
+```{r}
+knn_fit_tune <- readRDS("models/knn_fit_tune.Rds")
+
+knn_fit_tune %>%
+  collect_predictions()
+
+knn_fit_tune %>%
+  collect_metrics()
+
+knn_fit_tune %>% 
+  show_best(metric = "roc_auc", n = 5)
+
+knn_fit_tune %>% 
+  autoplot(metric = "roc_auc")
+
+```
+
+
+## Check results of the final KNN model
+
+```{r}
+knn_fit_final <- readRDS("models/knn_fit_final.Rds")
+
+knn_fit_final %>% 
+  collect_metrics()
+
+knn_fit_final %>% 
+  collect_predictions() %>% 
+  conf_mat(truth = classification_binary, estimate = .pred_class)
+
+```
+
